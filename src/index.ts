@@ -2,6 +2,7 @@ import {
   Callback,
   Comparator,
   identity,
+  isIterable,
   MapCallback,
   Predicate,
   ReduceCallback,
@@ -41,13 +42,13 @@ class IterableStream<T> implements Iterable<T> {
     this.#generator = generator;
   }
 
-  concat(...values: (T | IterableStream<T>)[]): IterableStream<T> {
+  concat(...values: (T | Iterable<T>)[]): IterableStream<T> {
     const generator = this.#generator;
     return new IterableStream(function* () {
       yield* generator();
       for (let i = 0; i < values.length; i += 1) {
         const value = values[i];
-        if (IterableStream.isIteratorStream(value)) {
+        if (isIterable(value)) {
           yield* value;
         } else {
           yield value;
@@ -85,11 +86,16 @@ class IterableStream<T> implements Iterable<T> {
     return null;
   }
 
-  flatMap<S>(mapper: MapCallback<T, S[]>): IterableStream<S> {
+  flatMap<S>(mapper: MapCallback<T, Iterable<S>>): IterableStream<S> {
     const generator = this.#generator;
     return new IterableStream(function* () {
       for (const value of generator()) {
-        yield* mapper(value);
+        const result = mapper(value);
+        if (isIterable(result)) {
+          yield* result;
+        } else {
+          yield result;
+        }
       }
     });
   }
