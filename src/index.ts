@@ -32,11 +32,12 @@ class IterableStream<T> implements Iterable<T> {
     });
   }
 
-  [iterableStreamSymbol] = true;
-
   #generator: () => Generator<T>;
 
   constructor(generator: () => Generator<T>) {
+    Object.defineProperty(this, iterableStreamSymbol, {
+      value: true,
+    });
     this.#generator = generator;
   }
 
