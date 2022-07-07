@@ -78,7 +78,7 @@ class IterableStream<T> implements Iterable<T> {
 
   find(predicate: Predicate<T>): T | null {
     for (const value of this.#generator()) {
-      if (!predicate(value)) {
+      if (predicate(value)) {
         return value;
       }
     }
