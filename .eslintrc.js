@@ -18,6 +18,12 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
-    "func-names": ["error", "always", { "generators": "never" }]
+    'func-names': ['error', 'always', { 'generators': 'never' }],
+    'no-restricted-syntax': [
+      'error',
+      'ForInStatement',
+      'LabeledStatement',
+      'WithStatement',
+    ],
   },
 };

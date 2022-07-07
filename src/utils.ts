@@ -1,8 +1,8 @@
-export type MapCallback<T, S> = (value: T, index?: number) => S;
-export type ReduceCallback<T, S> = (accumulator: S, value: T, index?: number) => S;
-export type Callback<T> = (value: T, index?: number) => void;
-export type Predicate<T> = (value: T, index?: number) => boolean;
+export type MapCallback<T, S> = (value: T) => S;
+export type Callback<T> = MapCallback<T, void>;
+export type Predicate<T> = MapCallback<T, boolean>;
+export type ReduceCallback<T, S> = (accumulator: S, value: T) => S;
 
 export type Comparator<T> = (a: T, b: T) => number;
 
-export const identity: MapCallback<any, any> = (n: any) => n
+export const identity = <T extends unknown>(n: T) => n;
