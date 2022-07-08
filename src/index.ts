@@ -245,11 +245,11 @@ class IterableStream<T> implements Iterable<T> {
     return new Set(this.#generator());
   }
 
-  unique<S = T>(keyMapper: MapCallback<T, S> = identity as MapCallback<T, S>): IterableStream<T> {
-    const previousGenerator = this.#generator;
+  unique<S = T>(keyMapper: MapCallback<T, S> = identity): IterableStream<T> {
+    const generator = this.#generator;
     return new IterableStream(function* () {
       const values = new Set();
-      for (const value of previousGenerator()) {
+      for (const value of generator()) {
         const id = keyMapper(value);
         if (!values.has(id)) {
           yield value;
