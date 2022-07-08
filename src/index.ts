@@ -11,12 +11,8 @@ import {
 const iterableStreamSymbol = Symbol('stream');
 
 class IterableStream<T> implements Iterable<T> {
-  static isIteratorStream<T>(obj: any): obj is IterableStream<T> {
-    return Boolean(obj?.[iterableStreamSymbol]);
-  }
-
-  static of<S>(...elements: S[]) {
-    return IterableStream.from(elements);
+  static empty<T = never>() {
+    return IterableStream.from<T>([]);
   }
 
   static from<S>(iterable: Iterable<S>) {
@@ -25,12 +21,20 @@ class IterableStream<T> implements Iterable<T> {
     });
   }
 
-  static join<S>(...streams: IterableStream<S>[]) {
+  static isIteratorStream<T>(obj: any): obj is IterableStream<T> {
+    return Boolean(obj?.[iterableStreamSymbol]);
+  }
+
+  static join<S = never>(...streams: IterableStream<S>[]) {
     return new IterableStream(function* () {
       for (let i = 0; i < streams.length; i += 1) {
         yield* streams[i].#generator();
       }
     });
+  }
+
+  static of<S = never>(...elements: S[]) {
+    return IterableStream.from(elements);
   }
 
   #generator: () => Generator<T>;
@@ -154,7 +158,7 @@ class IterableStream<T> implements Iterable<T> {
     let max = generator.next().value;
     for (const value of generator) {
       const comparison = comparator(max, value);
-      if (comparison > 0) {
+      if (comparison < 0) {
         max = value;
       }
     }
@@ -166,7 +170,7 @@ class IterableStream<T> implements Iterable<T> {
     let min = generator.next().value;
     for (const value of generator) {
       const comparison = comparator(min, value);
-      if (comparison < 0) {
+      if (comparison > 0) {
         min = value;
       }
     }
@@ -213,10 +217,10 @@ class IterableStream<T> implements Iterable<T> {
     return false;
   }
 
-  sum(): number {
+  sum(mapper: MapCallback<T, number> = identity): number {
     let sum = 0;
     for (const value of this.#generator()) {
-      sum += Number(value);
+      sum += mapper(value);
     }
     return sum;
   }
@@ -225,7 +229,10 @@ class IterableStream<T> implements Iterable<T> {
     return Array.from(this.#generator());
   }
 
-  toMap<K, V>(keyMapper: MapCallback<T, K>, valueMapper: MapCallback<T, V>): Map<K, V> {
+  toMap<K, V = T>(
+    keyMapper: MapCallback<T, K>,
+    valueMapper: MapCallback<T, V> = identity,
+  ): Map<K, V> {
     return new Map(
       this.toArray().map((value) => [
         keyMapper(value),
@@ -238,7 +245,7 @@ class IterableStream<T> implements Iterable<T> {
     return new Set(this.#generator());
   }
 
-  unique<S>(keyMapper: MapCallback<T, S> = identity as MapCallback<T, S>): IterableStream<T> {
+  unique<S = T>(keyMapper: MapCallback<T, S> = identity as MapCallback<T, S>): IterableStream<T> {
     const previousGenerator = this.#generator;
     const values = new Set();
     return new IterableStream(function* () {
