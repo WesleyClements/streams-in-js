@@ -96,6 +96,17 @@ describe('IterableStream', () => {
       expect(instance.concat(5, 6, 7, instance).toArray())
         .toEqual([...elements, 5, 6, 7, ...elements]);
     });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 1, 2, 3, 4];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const stream = instance.concat(5, 6, 7, instance);
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual([...elements, 5, 6, 7, ...elements]);
+      }
+    });
   });
   describe('every', () => {
     it('should return a true if all predicates are true', () => {
@@ -128,6 +139,18 @@ describe('IterableStream', () => {
       const test = (n: number) => n % 2 === 0;
       expect(instance.filter(test).toArray())
         .toEqual(elements.filter(test));
+    });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 1, 2, 3, 4];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const test = (n: number) => n % 2 === 0;
+      const stream = instance.filter(test);
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual(elements.filter(test));
+      }
     });
   });
   describe('find', () => {
@@ -173,6 +196,17 @@ describe('IterableStream', () => {
       });
       expect(instance.flatMap((n) => n as any).toArray())
         .toEqual(elements.flat());
+    });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [[0, 1], [2, 3, 4]];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const stream = instance.flatMap((n) => n);
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual(elements.flat());
+      }
     });
   });
   describe('forEach', () => {
@@ -250,6 +284,17 @@ describe('IterableStream', () => {
       expect(instance.limit(7).toArray())
         .toEqual(elements);
     });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 1, 2, 3, 4];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const stream = instance.limit(3);
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual(elements.slice(0, 3));
+      }
+    });
   });
   describe('map', () => {
     it('should return a new stream', () => {
@@ -269,6 +314,18 @@ describe('IterableStream', () => {
       const mapper = (n: number) => 2 * n;
       expect(instance.map(mapper).toArray())
         .toEqual(elements.map(mapper));
+    });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 1, 2, 3, 4];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const mapper = (n: number) => 2 * n;
+      const stream = instance.map(mapper);
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual(elements.map(mapper));
+      }
     });
   });
   describe('max', () => {
@@ -328,6 +385,17 @@ describe('IterableStream', () => {
       expect(results)
         .toEqual(elements);
     });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 1, 2, 3, 4];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const stream = instance.peek(() => {});
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual(elements);
+      }
+    });
   });
   describe('reduce', () => {
     it('should return the accumulated value of all elements in the stream', () => {
@@ -371,6 +439,17 @@ describe('IterableStream', () => {
       });
       expect(instance.skip(0).toArray())
         .toEqual(elements);
+    });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 1, 2, 3, 4];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const stream = instance.skip(2);
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual(elements.slice(2));
+      }
     });
   });
   describe('some', () => {
@@ -526,6 +605,17 @@ describe('IterableStream', () => {
       });
       expect(instance.unique().toArray())
         .toEqual([...new Set(elements)]);
+    });
+    it('should be callable multiple times with the same result', () => {
+      const elements = [0, 0, 1, 1, 2, 3, 3, 3, 4, 5, 5, 5, 5];
+      const instance = new IterableStream(function* () {
+        yield* elements;
+      });
+      const stream = instance.unique();
+      for (let i = 0; i < 20; i += 1) {
+        expect(stream.toArray())
+          .toEqual([...new Set(elements)]);
+      }
     });
   });
   describe('[Symbol.iterator]', () => {
