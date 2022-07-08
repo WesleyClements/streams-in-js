@@ -8,11 +8,12 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "test": "jest --coverage",
+    "benchmark": "node benchmark/index.js",
     "build": "run-p build:**",
     "build:esm": "tsc --project ./tsconfig.build.json --outdir ./dist/esm --module esnext",
     "build:cjs": "tsc --project ./tsconfig.build.json --outdir ./dist/cjs --module commonjs",
-    "build:types": "tsc --project ./tsconfig.build.json --outdir ./dist --declaration --emitDeclarationOnly"
+    "build:types": "tsc --project ./tsconfig.build.json --outdir ./dist --declaration --emitDeclarationOnly",
+    "test": "jest --coverage"
   },
   "keywords": [],
   "author": "Wesley Clements <wesley.clements@gmail.com>",
@@ -22,6 +23,7 @@
     "@types/node": "^18.0.3",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
+    "benchmark": "^2.1.4",
     "eslint": "^8.19.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-airbnb-base-typescript": "^1.1.0",
