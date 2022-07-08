@@ -1,4 +1,4 @@
-import { identity, isIterable } from '../src/utils';
+import { identity, isIterable } from '../utils';
 
 describe('utils', () => {
   describe('identity', () => {

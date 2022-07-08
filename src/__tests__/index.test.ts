@@ -1,4 +1,4 @@
-import IterableStream from '../src/index';
+import IterableStream from '../index';
 
 describe('IterableStream', () => {
   describe('static', () => {
